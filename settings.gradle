@@ -1,0 +1,4 @@
+rootProject.name="ChatWithOAuth2"
+
+include "ChatAPI"
+//include "AuthService"

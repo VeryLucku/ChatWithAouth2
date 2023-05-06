@@ -1,0 +1,14 @@
+server:
+    port: 9000
+spring:
+    datasource:
+        url: jdbc:postgresql://localhost:5432/Chatdb
+        username: postgres
+        password: Ufym->q-b-Vjyf
+    jpa:
+        hibernate:
+            ddl-auto: update
+client:
+    clientId: admin-client
+    clientSecret: secret
+    scopes: message.write, message.read
