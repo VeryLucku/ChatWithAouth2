@@ -3,11 +3,12 @@ package com.edu.chatapi.Model.ChatServices;
 import com.edu.chatapi.Model.ChatUnits.Chat;
 import com.edu.chatapi.RepoInterfaces.ChatAndMemberRepository;
 import com.edu.chatapi.RepoInterfaces.ChatRepository;
-import com.edu.chatapi.Repositories.JDBCChatAndMemberRepository;
-import com.edu.chatapi.Repositories.JDBCChatRepository;
+import com.edu.chatapi.RepoInterfaces.MessageRepository;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLDataException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,12 +16,16 @@ import java.util.UUID;
 @Service
 public class ChatService {
 
-    ChatRepository chatRepository;
-    ChatAndMemberRepository chatAndMemberRepository;
+    private final ChatRepository chatRepository;
+    private final ChatAndMemberRepository chatAndMemberRepository;
 
-    public ChatService(ChatRepository chatRepository, ChatAndMemberRepository chatAndMemberRepository) {
+    private final MessageRepository messageRepository;
+
+    public ChatService(ChatRepository chatRepository, ChatAndMemberRepository chatAndMemberRepository,
+                       MessageRepository messageRepository) {
         this.chatRepository = chatRepository;
         this.chatAndMemberRepository = chatAndMemberRepository;
+        this.messageRepository = messageRepository;
     }
 
     @Transactional
@@ -59,7 +64,22 @@ public class ChatService {
         return chats;
     }
 
+    @Transactional
     public void addChatMember(UUID chatId, String username) {
+        if (chatAndMemberRepository.isChatContainsMemberWithUsername(chatId, username)) {
+            throw new NullPointerException("User have already joined this chat");
+        }
         chatAndMemberRepository.addChatMember(chatId, username);
+    }
+
+    public void removeChatMember(UUID chatId, String username) {
+        chatAndMemberRepository.deleteMember(chatId, username);
+    }
+
+    @Transactional
+    public void deleteChat(UUID chatId) {
+        messageRepository.deleteMessagesFromChat(chatId);
+        chatAndMemberRepository.deleteMembersFromChat(chatId);
+        chatRepository.deleteChat(chatId);
     }
 }

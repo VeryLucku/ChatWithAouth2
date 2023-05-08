@@ -50,6 +50,23 @@ public class JDBCChatAndMemberRepository implements ChatAndMemberRepository {
         );
     }
 
+    @Override
+    public void deleteMember(UUID chatId, String username) {
+        jdbcTemplate.update(
+                "delete from \"chat-member\" where chat_id = ? and member_name = ?",
+                chatId,
+                username
+        );
+    }
+
+    @Override
+    public void deleteMembersFromChat(UUID chatId) {
+        jdbcTemplate.update(
+                "delete from \"chat-member\" where chat_id = ?",
+                chatId
+        );
+    }
+
     private String mapRowToMember(ResultSet row, int rowNum) throws SQLException {
         return row.getString("member_name");
     }

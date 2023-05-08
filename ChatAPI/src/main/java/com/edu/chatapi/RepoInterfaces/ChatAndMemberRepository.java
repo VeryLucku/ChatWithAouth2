@@ -10,4 +10,8 @@ public interface ChatAndMemberRepository {
     boolean isChatContainsMemberWithUsername(UUID chat_id, String username);
 
     void addChatMember(UUID chatId, String username);
+
+    void deleteMember(UUID chatId, String username);
+
+    void deleteMembersFromChat(UUID chatId);
 }

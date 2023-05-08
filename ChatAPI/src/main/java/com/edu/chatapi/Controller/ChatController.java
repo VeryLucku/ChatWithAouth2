@@ -1,8 +1,6 @@
 package com.edu.chatapi.Controller;
 
-import com.edu.chatapi.ChatApiApplication;
 import com.edu.chatapi.Model.ChatServices.ChatService;
-import com.edu.chatapi.Repositories.JDBCChatRepository;
 import com.edu.chatapi.Model.ChatUnits.Chat;
 import com.edu.chatapi.Model.DTOs.ChatDTO;
 import org.slf4j.Logger;
@@ -45,8 +43,23 @@ public class ChatController {
         return chat;
     }
 
-    @PostMapping("/join")
+    @PostMapping("/member")
     public void joinToChat(@RequestParam UUID chatId, Principal principal) {
-        chatService.addChatMember(chatId, principal.getName());
+        String username = principal.getName();
+        chatService.addChatMember(chatId, username);
+        log.info("User {} join to chat with id {}", username, chatId);
+    }
+
+    @DeleteMapping("/member")
+    public void leaveFromChat(@RequestParam UUID chatId, Principal principal) {
+        String username = principal.getName();
+        chatService.removeChatMember(chatId, username);
+        log.info("User {} leave from chat with id {}", username, chatId);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteChat(@PathVariable UUID id) {
+        chatService.deleteChat(id);
+        log.info("Chat with id {} was deleted", id);
     }
 }

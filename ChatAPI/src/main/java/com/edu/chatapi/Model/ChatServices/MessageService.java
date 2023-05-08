@@ -50,4 +50,8 @@ public class MessageService {
     public Iterable<ChatMessage> findAllByChatId(UUID chatId) {
         return messageRepository.findAllByChatId(chatId);
     }
+
+    public void deleteChatMessage(UUID id) {
+        messageRepository.deleteMessage(id);
+    }
 }

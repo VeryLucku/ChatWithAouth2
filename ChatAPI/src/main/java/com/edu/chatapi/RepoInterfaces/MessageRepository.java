@@ -14,4 +14,8 @@ public interface MessageRepository {
     ChatMessage save(ChatMessage chatMessage);
 
     List<ChatMessage> findAllByChatId(UUID chatId);
+
+    void deleteMessage(UUID id);
+
+    void deleteMessagesFromChat(UUID chatId);
 }

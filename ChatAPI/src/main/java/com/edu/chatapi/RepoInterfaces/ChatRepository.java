@@ -13,4 +13,6 @@ public interface ChatRepository {
     Chat save(Chat chat);
 
     List<Chat> findAll();
+
+    void deleteChat(UUID chatId);
 }

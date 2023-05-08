@@ -42,6 +42,11 @@ public class MessageController {
         return messageService.findById(id);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteChatMessage(@PathVariable UUID id) {
+        messageService.deleteChatMessage(id);
+    }
+
     @PostMapping
     public ChatMessage saveMessage(@Valid @RequestBody MessageDTO messageDTO,
                                    Principal principal) {

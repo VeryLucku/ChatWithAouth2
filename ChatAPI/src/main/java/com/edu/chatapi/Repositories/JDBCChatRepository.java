@@ -14,13 +14,10 @@ import java.util.*;
 public class JDBCChatRepository implements ChatRepository {
 
     JdbcTemplate jdbcTemplate;
-    JDBCChatAndMemberRepository jdbcChatAndMemberRepository;
 
     @Autowired
-    public JDBCChatRepository(JdbcTemplate jdbcTemplate,
-                              JDBCChatAndMemberRepository jdbcChatAndMemberRepository) {
+    public JDBCChatRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.jdbcChatAndMemberRepository = jdbcChatAndMemberRepository;
     }
 
     @Override
@@ -51,6 +48,14 @@ public class JDBCChatRepository implements ChatRepository {
         return jdbcTemplate.query(
                 "select id, name, author from Chats",
                 this::mapRowToChat
+        );
+    }
+
+    @Override
+    public void deleteChat(UUID chatId) {
+        jdbcTemplate.update(
+                "delete from chats where id = ?",
+                chatId
         );
     }
 

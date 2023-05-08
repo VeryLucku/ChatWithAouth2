@@ -56,13 +56,28 @@ public class JDBCMessageRepository implements MessageRepository {
 
     @Override
     public List<ChatMessage> findAllByChatId(UUID chatId) {
-        List<ChatMessage> results = jdbcTemplate.query(
+
+        return jdbcTemplate.query(
                 "select id, created_at, message, username, chat_id from Messages where chat_id=?",
                 this::mapRowToMessage,
                 chatId
         );
+    }
 
-        return results;
+    @Override
+    public void deleteMessage(UUID id) {
+        jdbcTemplate.update(
+                "delete from messages where id = ?",
+                id
+        );
+    }
+
+    @Override
+    public void deleteMessagesFromChat(UUID chatId) {
+        jdbcTemplate.update(
+                "delete from messages where chat_id = ?",
+                chatId
+        );
     }
 
     private ChatMessage mapRowToMessage(ResultSet row, int rowNum) throws SQLException {
