@@ -24,7 +24,11 @@ public class AuthServiceApplication {
 		return args -> {
 			if (repo.findByUsername("admin") == null) {
 				repo.save(
-						new UserData(UUID.randomUUID(),"admin", encoder.encode("admin"), "ROLE_ADMIN"));
+						new UserData("admin", encoder.encode("admin"), "ROLE_ADMIN"));
+			}
+			if (repo.findByUsername("vasya") == null) {
+				repo.save(
+						new UserData("vasya", encoder.encode("vasya"), "ROLE_USER"));
 			}
 		};
 	}

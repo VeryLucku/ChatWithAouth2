@@ -18,7 +18,7 @@ public class ChatMessage {
     private UUID id = UUID.randomUUID();
 
     @NotBlank
-    private String username;
+    private String author;
 
     private Date createdAt = new Date();
 
@@ -27,6 +27,11 @@ public class ChatMessage {
     private String message;
 
     @NotNull
-    private UUID chat_id;
+    private UUID chatId;
 
+    public ChatMessage(String author, String message, UUID chatId) {
+        this.author = author;
+        this.message = message;
+        this.chatId = chatId;
+    }
 }

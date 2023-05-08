@@ -18,6 +18,16 @@ public class Chat {
 
     private String author;
 
+    private List<String> memberNames;
 
-    private List<String> member_ids;
+    public Chat(String name, String author) {
+        this.name = name;
+        this.author = author;
+    }
+
+    public Chat(UUID id, String name, String author) {
+        this.id = id;
+        this.name = name;
+        this.author = author;
+    }
 }

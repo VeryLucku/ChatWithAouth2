@@ -1,8 +1,7 @@
-package com.edu.chatapi.Model.ChatServices;
+package com.edu.chatapi.Repositories;
 
 import com.edu.chatapi.Model.ChatUnits.Chat;
-import com.edu.chatapi.Model.ChatUnits.Member;
-import com.edu.chatapi.Persistence.ChatRepository;
+import com.edu.chatapi.RepoInterfaces.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -15,17 +14,19 @@ import java.util.*;
 public class JDBCChatRepository implements ChatRepository {
 
     JdbcTemplate jdbcTemplate;
-    JDBCMemberRepository jdbcMemberRepository;
+    JDBCChatAndMemberRepository jdbcChatAndMemberRepository;
 
     @Autowired
-    public JDBCChatRepository(JdbcTemplate jdbcTemplate) {
+    public JDBCChatRepository(JdbcTemplate jdbcTemplate,
+                              JDBCChatAndMemberRepository jdbcChatAndMemberRepository) {
         this.jdbcTemplate = jdbcTemplate;
+        this.jdbcChatAndMemberRepository = jdbcChatAndMemberRepository;
     }
 
     @Override
     public Optional<Chat> findById(UUID id) {
         List<Chat> results = jdbcTemplate.query(
-                "select id, name, author, members from Chats where id=?",
+                "select id, name, author from Chats where id=?",
                 this::mapRowToChat,
                 id
         );
@@ -35,31 +36,33 @@ public class JDBCChatRepository implements ChatRepository {
     }
 
     @Override
-    public Optional<Chat> save(Chat chat) {
+    public Chat save(Chat chat) {
         jdbcTemplate.update(
-                "insert into Chats (id, name, author, members) values (?, ?, ?, ?)",
+                "insert into Chats (id, name, author) values (?, ?, ?)",
                 chat.getId(),
                 chat.getName(),
-                chat.getAuthor(),
-                chat.getMember_ids()
+                chat.getAuthor()
         );
-        return Optional.of(chat);
+        return chat;
     }
 
     @Override
     public List<Chat> findAll() {
         return jdbcTemplate.query(
-                "select id, name, author, members from Chats",
+                "select id, name, author from Chats",
                 this::mapRowToChat
         );
     }
 
     private Chat mapRowToChat(ResultSet row, int rowNum) throws SQLException {
+        UUID id = UUID.fromString(row.getString("id"));
+        String name = row.getString("name");
+        String author = row.getString("author");
+
         return new Chat(
-                UUID.fromString(row.getString("id")),
-                row.getString("name"),
-                row.getString("author"),
-                Arrays.stream((String[])row.getArray("members").getArray()).toList()
+                id,
+                name,
+                author
         );
     }
 }

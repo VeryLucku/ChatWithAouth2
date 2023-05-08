@@ -1,11 +1,10 @@
-package com.edu.chatapi.Model.ChatServices;
+package com.edu.chatapi.Repositories;
 
 import com.edu.chatapi.Model.ChatUnits.ChatMessage;
-import com.edu.chatapi.Persistence.MessageRepository;
+import com.edu.chatapi.RepoInterfaces.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,16 +30,16 @@ public class JDBCMessageRepository implements MessageRepository {
     }
 
     @Override
-    public Optional<ChatMessage> save(ChatMessage chatMessage) {
+    public ChatMessage save(ChatMessage chatMessage) {
         jdbcTemplate.update(
                 "insert into Messages (id, created_at, message, username, chat_id) values (?, ?, ?, ?, ?)",
                 chatMessage.getId(),
                 chatMessage.getCreatedAt(),
                 chatMessage.getMessage(),
-                chatMessage.getUsername(),
-                chatMessage.getChat_id()
+                chatMessage.getAuthor(),
+                chatMessage.getChatId()
         );
-        return Optional.of(chatMessage);
+        return chatMessage;
     }
 
     @Override
@@ -53,6 +52,17 @@ public class JDBCMessageRepository implements MessageRepository {
         return results.size() == 0 ?
                 Optional.empty() :
                 Optional.of(results.get(0));
+    }
+
+    @Override
+    public List<ChatMessage> findAllByChatId(UUID chatId) {
+        List<ChatMessage> results = jdbcTemplate.query(
+                "select id, created_at, message, username, chat_id from Messages where chat_id=?",
+                this::mapRowToMessage,
+                chatId
+        );
+
+        return results;
     }
 
     private ChatMessage mapRowToMessage(ResultSet row, int rowNum) throws SQLException {

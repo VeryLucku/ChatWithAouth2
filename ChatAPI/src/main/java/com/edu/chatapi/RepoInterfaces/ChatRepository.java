@@ -1,7 +1,6 @@
-package com.edu.chatapi.Persistence;
+package com.edu.chatapi.RepoInterfaces;
 
 import com.edu.chatapi.Model.ChatUnits.Chat;
-import com.edu.chatapi.Model.ChatUnits.ChatMessage;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +10,7 @@ public interface ChatRepository {
 
     Optional<Chat> findById(UUID id);
 
-    Optional<Chat> save(Chat chat);
+    Chat save(Chat chat);
 
     List<Chat> findAll();
 }

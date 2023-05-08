@@ -1,4 +1,4 @@
-package com.edu.chatapi.Persistence;
+package com.edu.chatapi.RepoInterfaces;
 
 import com.edu.chatapi.Model.ChatUnits.ChatMessage;
 
@@ -11,5 +11,7 @@ public interface MessageRepository {
 
     Optional<ChatMessage> findById(UUID id);
 
-    Optional<ChatMessage> save(ChatMessage chatMessage);
+    ChatMessage save(ChatMessage chatMessage);
+
+    List<ChatMessage> findAllByChatId(UUID chatId);
 }

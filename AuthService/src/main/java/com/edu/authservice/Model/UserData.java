@@ -18,9 +18,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 public class UserData implements UserDetails {
-    @Id
-    private UUID id;
 
+    @Id
     private String username;
     private String password;
     private String role;

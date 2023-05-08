@@ -58,7 +58,8 @@ public class AuthorizationServerConfig {
                 // Accept access tokens for User Info and/or Client Registration
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 
-        return http.build();
+        return http
+                .build();
     }
 
     final
@@ -78,12 +79,11 @@ public class AuthorizationServerConfig {
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                 .redirectUri("http://127.0.0.1:9000/login/oauth2/code")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
                 .scopes((u) -> u.addAll(registeredClientProperties.getScopes()))
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+                //.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofDays(10)).build())
                 .build();
 
