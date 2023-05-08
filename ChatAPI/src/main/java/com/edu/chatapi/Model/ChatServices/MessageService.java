@@ -4,6 +4,7 @@ import com.edu.chatapi.Model.ChatUnits.ChatMessage;
 import com.edu.chatapi.RepoInterfaces.ChatAndMemberRepository;
 import com.edu.chatapi.RepoInterfaces.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +52,20 @@ public class MessageService {
         return messageRepository.findAllByChatId(chatId);
     }
 
-    public void deleteChatMessage(UUID id) {
+    @Transactional
+    public void deleteChatMessage(UUID id, String username) {
+        Optional<ChatMessage> message = messageRepository.findById(id);
+
+        if (message.isEmpty()) {
+            throw new NullPointerException("Message with given id does not exist");
+        }
+
+        ChatMessage chatMessage = message.get();
+
+        if (!chatMessage.getAuthor().equals(username)) {
+            throw new AccessDeniedException("Only author of message can delete it");
+        }
+
         messageRepository.deleteMessage(id);
     }
 }

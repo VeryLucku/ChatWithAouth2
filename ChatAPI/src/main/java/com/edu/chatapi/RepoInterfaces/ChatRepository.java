@@ -15,4 +15,6 @@ public interface ChatRepository {
     List<Chat> findAll();
 
     void deleteChat(UUID chatId);
+
+    Optional<String> getChatAuthor(UUID id);
 }

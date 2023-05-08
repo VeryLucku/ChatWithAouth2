@@ -5,6 +5,7 @@ import com.edu.chatapi.RepoInterfaces.ChatAndMemberRepository;
 import com.edu.chatapi.RepoInterfaces.ChatRepository;
 import com.edu.chatapi.RepoInterfaces.MessageRepository;
 import org.springframework.jdbc.UncategorizedSQLException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,7 +78,19 @@ public class ChatService {
     }
 
     @Transactional
-    public void deleteChat(UUID chatId) {
+    public void deleteChat(UUID chatId, String username) {
+        Optional<String> authorOpt = chatRepository.getChatAuthor(chatId);
+
+        if (authorOpt.isEmpty()) {
+            throw new NullPointerException("Chat with specified id does not exist");
+        }
+
+        String author = authorOpt.get();
+
+        if (!author.equals(username)) {
+            throw new NullPointerException("Only author of chat can delete it");
+        }
+
         messageRepository.deleteMessagesFromChat(chatId);
         chatAndMemberRepository.deleteMembersFromChat(chatId);
         chatRepository.deleteChat(chatId);

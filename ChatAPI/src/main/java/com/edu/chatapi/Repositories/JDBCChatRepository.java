@@ -59,6 +59,19 @@ public class JDBCChatRepository implements ChatRepository {
         );
     }
 
+    @Override
+    public Optional<String> getChatAuthor(UUID id) {
+        List<String> results =  jdbcTemplate.query(
+                "select author from chats where id = ?",
+                (rs, rowNum) -> rs.getString("author"),
+                id
+        );
+
+        return results.size() == 0 ?
+                Optional.empty() :
+                Optional.of(results.get(0));
+    }
+
     private Chat mapRowToChat(ResultSet row, int rowNum) throws SQLException {
         UUID id = UUID.fromString(row.getString("id"));
         String name = row.getString("name");

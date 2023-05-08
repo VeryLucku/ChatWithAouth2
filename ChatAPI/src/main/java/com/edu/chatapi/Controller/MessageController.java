@@ -43,8 +43,8 @@ public class MessageController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteChatMessage(@PathVariable UUID id) {
-        messageService.deleteChatMessage(id);
+    public void deleteChatMessage(@PathVariable UUID id, Principal principal) {
+        messageService.deleteChatMessage(id, principal.getName());
     }
 
     @PostMapping
