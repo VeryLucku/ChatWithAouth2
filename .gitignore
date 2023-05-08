@@ -41,3 +41,5 @@ out/
 /ChatAPI/gradlew.bat
 /gradlew.bat
 /AuthService/gradlew
+/AuthService/gradle/
+/ChatAPI/gradle/
