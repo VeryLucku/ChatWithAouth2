@@ -23,7 +23,6 @@ public class RegistrationController {
 
     @PostMapping
     public void processRegistration(UserData user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 }
