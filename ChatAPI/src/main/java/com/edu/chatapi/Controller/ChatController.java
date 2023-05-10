@@ -2,6 +2,7 @@ package com.edu.chatapi.Controller;
 
 import com.edu.chatapi.Model.ChatServices.ChatService;
 import com.edu.chatapi.Model.ChatUnits.Chat;
+import com.edu.chatapi.Model.ChatUnits.Member;
 import com.edu.chatapi.Model.DTOs.ChatDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,20 +42,6 @@ public class ChatController {
         chat = chatService.save(chat);
         log.info("Chat with id {} was created, author {}", chat.getId(), chat.getAuthor());
         return chat;
-    }
-
-    @PostMapping("/member")
-    public void joinToChat(@RequestParam UUID chatId, Principal principal) {
-        String username = principal.getName();
-        chatService.addChatMember(chatId, username);
-        log.info("User {} join to chat with id {}", username, chatId);
-    }
-
-    @DeleteMapping("/member")
-    public void leaveFromChat(@RequestParam UUID chatId, Principal principal) {
-        String username = principal.getName();
-        chatService.removeChatMember(chatId, username);
-        log.info("User {} leave from chat with id {}", username, chatId);
     }
 
     @DeleteMapping("/{id}")

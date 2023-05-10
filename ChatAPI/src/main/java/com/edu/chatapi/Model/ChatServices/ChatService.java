@@ -1,15 +1,14 @@
 package com.edu.chatapi.Model.ChatServices;
 
+import com.edu.chatapi.CustomExceptions.InvalidActionException;
 import com.edu.chatapi.Model.ChatUnits.Chat;
+import com.edu.chatapi.Model.ChatUnits.Member;
 import com.edu.chatapi.RepoInterfaces.ChatAndMemberRepository;
 import com.edu.chatapi.RepoInterfaces.ChatRepository;
 import com.edu.chatapi.RepoInterfaces.MessageRepository;
-import org.springframework.jdbc.UncategorizedSQLException;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLDataException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,7 +47,8 @@ public class ChatService {
     @Transactional
     public Chat save(Chat chat) {
         chat = chatRepository.save(chat);
-        addChatMember(chat.getId(), chat.getAuthor());
+        Member member = new Member(chat.getId(), chat.getAuthor(), Member.Role.OWNER);
+        addChatMember(member);
         chat.setMemberNames(List.of(chat.getAuthor()));
         return chat;
     }
@@ -66,33 +66,36 @@ public class ChatService {
     }
 
     @Transactional
-    public void addChatMember(UUID chatId, String username) {
-        if (chatAndMemberRepository.isChatContainsMemberWithUsername(chatId, username)) {
-            throw new NullPointerException("User have already joined this chat");
-        }
-        chatAndMemberRepository.addChatMember(chatId, username);
-    }
-
-    public void removeChatMember(UUID chatId, String username) {
-        chatAndMemberRepository.deleteMember(chatId, username);
-    }
-
-    @Transactional
     public void deleteChat(UUID chatId, String username) {
-        Optional<String> authorOpt = chatRepository.getChatAuthor(chatId);
+        //TODO add filter of requests to not search member role with every request
+        Member.Role role = chatAndMemberRepository.getChatMemberRole(chatId, username);
 
-        if (authorOpt.isEmpty()) {
-            throw new NullPointerException("Chat with specified id does not exist");
-        }
-
-        String author = authorOpt.get();
-
-        if (!author.equals(username)) {
+        if (role != Member.Role.OWNER) {
             throw new NullPointerException("Only author of chat can delete it");
         }
 
         messageRepository.deleteMessagesFromChat(chatId);
         chatAndMemberRepository.deleteMembersFromChat(chatId);
         chatRepository.deleteChat(chatId);
+    }
+
+    @Transactional
+    public void addChatMember(Member member) {
+        if (chatAndMemberRepository.isChatContainsMemberWithUsername(member.getChatId(), member.getMemberName())) {
+            throw new NullPointerException("User have already joined this chat");
+        }
+        chatAndMemberRepository.addChatMember(member);
+    }
+
+    @Transactional
+    public void removeChatMember(UUID chatId, String username) {
+
+        Member.Role role = chatAndMemberRepository.getChatMemberRole(chatId, username);
+
+        if (role == Member.Role.OWNER) {
+            throw new InvalidActionException("Chat owner can't leave it's own chat");
+        }
+
+        chatAndMemberRepository.deleteMember(new Member(chatId, username, role));
     }
 }
