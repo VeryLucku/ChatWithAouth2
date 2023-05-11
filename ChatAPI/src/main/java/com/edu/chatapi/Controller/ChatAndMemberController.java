@@ -1,6 +1,5 @@
 package com.edu.chatapi.Controller;
 
-import com.edu.chatapi.Model.ChatServices.ChatAndMemberService;
 import com.edu.chatapi.Model.ChatServices.ChatService;
 import com.edu.chatapi.Model.ChatUnits.Member;
 import org.slf4j.Logger;

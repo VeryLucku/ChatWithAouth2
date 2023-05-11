@@ -5,9 +5,11 @@ import com.edu.chatapi.Model.ChatUnits.Member;
 import com.edu.chatapi.RepoInterfaces.ChatAndMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.IncorrectResultSetColumnCountException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.ResultSet;
 import java.sql.SQLDataException;
@@ -36,6 +38,15 @@ public class JDBCChatAndMemberRepository implements ChatAndMemberRepository {
     }
 
     @Override
+    public List<UUID> getAllMemberChats(String username) {
+        return jdbcTemplate.query(
+                "select chat_id from \"chat-member\" where member_name=?",
+                this::mapRowToChatId,
+                username
+        );
+    }
+
+    @Override
     public boolean isChatContainsMemberWithUsername(UUID chatId, String username) {
         List<String> usernames = jdbcTemplate.query(
                 "select member_name from \"chat-member\" where chat_id=? and member_name=?",
@@ -48,7 +59,7 @@ public class JDBCChatAndMemberRepository implements ChatAndMemberRepository {
     }
 
     @Override
-    public Member.Role getChatMemberRole(UUID chatId, String username) {
+    public Optional<Member.Role> getChatMemberRole(UUID chatId, String username) {
         List<Member.Role> results = jdbcTemplate.query(
                 "select role from \"chat-member\" where chat_id=? and member_name=?",
                 this::mapRowToMemberRole,
@@ -56,12 +67,14 @@ public class JDBCChatAndMemberRepository implements ChatAndMemberRepository {
                 username
         );
 
-        if (results.size() == 0) {
-            throw new NullPointerException("There is no member at this chat");
-        }
+        return results.size() == 0 ?
+        Optional.empty() : Optional.of(results.get(0));
+    }
 
-
-        return results.get(0);
+    @Override
+    public boolean isChatMemberHaveRole(UUID chatId, String username, Member.Role role) {
+        Optional<Member.Role> realRole = getChatMemberRole(chatId, username);
+        return realRole.isPresent() && realRole.get().equals(role);
     }
 
     @Override
@@ -96,6 +109,10 @@ public class JDBCChatAndMemberRepository implements ChatAndMemberRepository {
 
     private String mapRowToMemberName(ResultSet row, int rowNum) throws SQLException {
         return row.getString("member_name");
+    }
+
+    private UUID mapRowToChatId(ResultSet row, int rowNum) throws SQLException {
+        return UUID.fromString(row.getString("chat_id"));
     }
 
     private Member.Role mapRowToMemberRole(ResultSet row, int rowNum) throws SQLException {

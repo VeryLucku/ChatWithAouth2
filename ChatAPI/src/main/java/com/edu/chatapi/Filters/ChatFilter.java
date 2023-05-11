@@ -11,7 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.util.UUID;
 
@@ -30,10 +29,10 @@ public class ChatFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Principal principal = request.getUserPrincipal();
         UUID id = UUID.fromString(request.getServletPath().split("/")[3]);
-        Member.Role role = chatAndMemberRepository.getChatMemberRole(id, principal.getName());
 
-        if (role != Member.Role.OWNER) {
-            response.sendError(403, "Only author can delete chat");
+        if (chatAndMemberRepository.isChatMemberHaveRole(id, principal.getName(), Member.Role.OWNER)) {
+            response.sendError(400, "You aren't chat owner");
+            return;
         }
 
         filterChain.doFilter(request, response);

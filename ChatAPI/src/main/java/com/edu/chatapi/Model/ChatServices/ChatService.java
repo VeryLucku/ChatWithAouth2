@@ -9,6 +9,7 @@ import com.edu.chatapi.RepoInterfaces.MessageRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -66,6 +67,20 @@ public class ChatService {
     }
 
     @Transactional
+    public Iterable<Chat> findAllByUsername(String username) {
+        List<UUID> chatIds = chatAndMemberRepository.getAllMemberChats(username);
+
+        List<Chat> chats = new ArrayList<>();
+
+        for (UUID id : chatIds) {
+            Optional<Chat> chat = chatRepository.findById(id);
+            chat.ifPresent(chats::add);
+        }
+
+        return chats;
+    }
+
+    @Transactional
     public void deleteChat(UUID chatId) {
 
         messageRepository.deleteMessagesFromChat(chatId);
@@ -84,12 +99,12 @@ public class ChatService {
     @Transactional
     public void removeChatMember(UUID chatId, String username) {
 
-        Member.Role role = chatAndMemberRepository.getChatMemberRole(chatId, username);
+        Optional<Member.Role> role = chatAndMemberRepository.getChatMemberRole(chatId, username);
 
-        if (role == Member.Role.OWNER) {
+        if (role.get() == Member.Role.OWNER) {
             throw new InvalidActionException("Chat owner can't leave it's own chat");
         }
 
-        chatAndMemberRepository.deleteMember(new Member(chatId, username, role));
+        chatAndMemberRepository.deleteMember(new Member(chatId, username, role.get()));
     }
 }

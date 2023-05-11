@@ -51,6 +51,8 @@ public class JDBCChatRepository implements ChatRepository {
         );
     }
 
+
+
     @Override
     public void deleteChat(UUID chatId) {
         jdbcTemplate.update(
