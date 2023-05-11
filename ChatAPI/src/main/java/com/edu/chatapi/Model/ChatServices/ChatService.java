@@ -66,13 +66,7 @@ public class ChatService {
     }
 
     @Transactional
-    public void deleteChat(UUID chatId, String username) {
-        //TODO add filter of requests to not search member role with every request
-        Member.Role role = chatAndMemberRepository.getChatMemberRole(chatId, username);
-
-        if (role != Member.Role.OWNER) {
-            throw new NullPointerException("Only author of chat can delete it");
-        }
+    public void deleteChat(UUID chatId) {
 
         messageRepository.deleteMessagesFromChat(chatId);
         chatAndMemberRepository.deleteMembersFromChat(chatId);

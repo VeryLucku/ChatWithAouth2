@@ -45,8 +45,8 @@ public class ChatController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteChat(@PathVariable UUID id, Principal principal) {
-        chatService.deleteChat(id, principal.getName());
+    public void deleteChat(@PathVariable UUID id) {
+        chatService.deleteChat(id);
         log.info("Chat with id {} was deleted", id);
     }
 }
