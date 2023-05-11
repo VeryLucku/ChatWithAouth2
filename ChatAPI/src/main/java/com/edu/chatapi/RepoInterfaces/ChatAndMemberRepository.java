@@ -22,5 +22,5 @@ public interface ChatAndMemberRepository {
 
     void deleteMembersFromChat(UUID chatId);
 
-    boolean isChatMemberHaveRole(UUID chatId, String username, Member.Role role);
+    boolean isChatMemberHasRole(UUID chatId, String username, Member.Role role);
 }

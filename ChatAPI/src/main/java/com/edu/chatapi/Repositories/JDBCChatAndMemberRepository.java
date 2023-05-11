@@ -72,7 +72,7 @@ public class JDBCChatAndMemberRepository implements ChatAndMemberRepository {
     }
 
     @Override
-    public boolean isChatMemberHaveRole(UUID chatId, String username, Member.Role role) {
+    public boolean isChatMemberHasRole(UUID chatId, String username, Member.Role role) {
         Optional<Member.Role> realRole = getChatMemberRole(chatId, username);
         return realRole.isPresent() && realRole.get().equals(role);
     }
@@ -92,11 +92,14 @@ public class JDBCChatAndMemberRepository implements ChatAndMemberRepository {
 
 
 
-        jdbcTemplate.update(
+        int count = jdbcTemplate.update(
                 "delete from \"chat-member\" where chat_id = ? and member_name = ?",
                 member.getChatId(),
                 member.getMemberName()
         );
+        if (count == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You aren't joined this chat");
+        }
     }
 
     @Override

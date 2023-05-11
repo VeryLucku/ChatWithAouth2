@@ -14,11 +14,11 @@ public class MessageDTO {
     private String message;
 
     @NotNull
-    private UUID chat_id;
+    private UUID chatId;
 
     public ChatMessage toChatMessage(String author) {
         return new ChatMessage(author,
                 message,
-                chat_id);
+                chatId);
     }
 }

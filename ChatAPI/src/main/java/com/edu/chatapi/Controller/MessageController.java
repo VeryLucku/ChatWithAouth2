@@ -1,8 +1,6 @@
 package com.edu.chatapi.Controller;
 
-import com.edu.chatapi.ChatApiApplication;
 import com.edu.chatapi.Model.ChatServices.MessageService;
-import com.edu.chatapi.Repositories.JDBCMessageRepository;
 import com.edu.chatapi.Model.ChatUnits.ChatMessage;
 import com.edu.chatapi.Model.DTOs.MessageDTO;
 import org.slf4j.Logger;

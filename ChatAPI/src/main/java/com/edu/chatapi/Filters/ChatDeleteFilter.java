@@ -1,7 +1,10 @@
 package com.edu.chatapi.Filters;
 
+import com.edu.chatapi.Helpers.UUIDExtractor;
 import com.edu.chatapi.Model.ChatUnits.Member;
 import com.edu.chatapi.RepoInterfaces.ChatAndMemberRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -15,12 +18,14 @@ import java.security.Principal;
 import java.util.UUID;
 
 @Component
-public class ChatFilter extends OncePerRequestFilter {
+public class ChatDeleteFilter extends OncePerRequestFilter {
 
     ChatAndMemberRepository chatAndMemberRepository;
 
+    final Logger log = LoggerFactory.getLogger(ChatDeleteFilter.class);
+
     @Autowired
-    public ChatFilter(ChatAndMemberRepository chatAndMemberRepository) {
+    public ChatDeleteFilter(ChatAndMemberRepository chatAndMemberRepository) {
         super();
         this.chatAndMemberRepository = chatAndMemberRepository;
     }
@@ -28,12 +33,14 @@ public class ChatFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Principal principal = request.getUserPrincipal();
-        UUID id = UUID.fromString(request.getServletPath().split("/")[3]);
+        UUID id = UUIDExtractor.extract(request.getServletPath());
 
-        if (chatAndMemberRepository.isChatMemberHaveRole(id, principal.getName(), Member.Role.OWNER)) {
+        if (!chatAndMemberRepository.isChatMemberHasRole(id, principal.getName(), Member.Role.OWNER)) {
             response.sendError(400, "You aren't chat owner");
             return;
         }
+
+        log.info("Filter checked that current action performed by chat owner, username {}", principal.getName());
 
         filterChain.doFilter(request, response);
     }

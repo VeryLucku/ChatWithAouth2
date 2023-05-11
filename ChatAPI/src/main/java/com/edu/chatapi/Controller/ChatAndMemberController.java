@@ -10,7 +10,7 @@ import java.security.Principal;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "/api/chats/members", produces = "application/json")
+@RequestMapping(path = "/api/members", produces = "application/json")
 public class ChatAndMemberController {
 
     final Logger log = LoggerFactory.getLogger(ChatAndMemberController.class);

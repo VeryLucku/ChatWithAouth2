@@ -73,8 +73,8 @@ public class ChatService {
         List<Chat> chats = new ArrayList<>();
 
         for (UUID id : chatIds) {
-            Optional<Chat> chat = chatRepository.findById(id);
-            chat.ifPresent(chats::add);
+            Chat chat = findById(id);
+            chats.add(chat);
         }
 
         return chats;
@@ -99,12 +99,7 @@ public class ChatService {
     @Transactional
     public void removeChatMember(UUID chatId, String username) {
 
-        Optional<Member.Role> role = chatAndMemberRepository.getChatMemberRole(chatId, username);
 
-        if (role.get() == Member.Role.OWNER) {
-            throw new InvalidActionException("Chat owner can't leave it's own chat");
-        }
-
-        chatAndMemberRepository.deleteMember(new Member(chatId, username, role.get()));
+        chatAndMemberRepository.deleteMember(new Member(chatId, username, null));
     }
 }
