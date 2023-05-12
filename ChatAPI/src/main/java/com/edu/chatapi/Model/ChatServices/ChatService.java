@@ -98,8 +98,15 @@ public class ChatService {
 
     @Transactional
     public void removeChatMember(UUID chatId, String username) {
-
-
         chatAndMemberRepository.deleteMember(new Member(chatId, username, null));
+    }
+
+    @Transactional
+    public void changeChatMemberRole(String owner, Member member) {
+        chatAndMemberRepository.changeChatMemberRole(member);
+
+        if (member.getRole() == Member.Role.OWNER) {
+            chatAndMemberRepository.changeChatMemberRole(new Member(member.getChatId(), owner, Member.Role.MEMBER));
+        }
     }
 }

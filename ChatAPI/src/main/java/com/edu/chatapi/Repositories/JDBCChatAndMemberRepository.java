@@ -1,18 +1,14 @@
 package com.edu.chatapi.Repositories;
 
-import com.edu.chatapi.CustomExceptions.DBDataException;
 import com.edu.chatapi.Model.ChatUnits.Member;
 import com.edu.chatapi.RepoInterfaces.ChatAndMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.IncorrectResultSetColumnCountException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.ResultSet;
-import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -69,6 +65,16 @@ public class JDBCChatAndMemberRepository implements ChatAndMemberRepository {
 
         return results.size() == 0 ?
         Optional.empty() : Optional.of(results.get(0));
+    }
+
+    @Override
+    public void changeChatMemberRole(Member member) {
+        jdbcTemplate.update(
+                "update \"chat-member\" set role = ? where chat_id = ? and member_name = ?",
+                member.getRole().toString(),
+                member.getChatId(),
+                member.getMemberName()
+        );
     }
 
     @Override

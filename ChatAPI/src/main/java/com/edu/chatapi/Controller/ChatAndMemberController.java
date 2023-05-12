@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.UUID;
 
@@ -32,5 +33,11 @@ public class ChatAndMemberController {
         String username = principal.getName();
         chatService.removeChatMember(chatId, username);
         log.info("User {} leave from chat with id {}", username, chatId);
+    }
+
+    @PutMapping("/role")
+    public void changeChatMemberRole(@Valid @RequestBody Member member,
+                                     Principal principal) {
+        chatService.changeChatMemberRole(principal.getName(), member);
     }
 }

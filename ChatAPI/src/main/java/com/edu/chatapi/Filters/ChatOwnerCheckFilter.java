@@ -18,14 +18,14 @@ import java.security.Principal;
 import java.util.UUID;
 
 @Component
-public class ChatDeleteFilter extends OncePerRequestFilter {
+public class ChatOwnerCheckFilter extends OncePerRequestFilter {
 
     ChatAndMemberRepository chatAndMemberRepository;
 
-    final Logger log = LoggerFactory.getLogger(ChatDeleteFilter.class);
+    final Logger log = LoggerFactory.getLogger(ChatOwnerCheckFilter.class);
 
     @Autowired
-    public ChatDeleteFilter(ChatAndMemberRepository chatAndMemberRepository) {
+    public ChatOwnerCheckFilter(ChatAndMemberRepository chatAndMemberRepository) {
         super();
         this.chatAndMemberRepository = chatAndMemberRepository;
     }
@@ -48,6 +48,7 @@ public class ChatDeleteFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getServletPath();
-        return !(path.startsWith("/api/chats") && request.getMethod().equals("DELETE")) ;
+        return !(path.startsWith("/api/chats") && request.getMethod().equals("DELETE") ||
+                path.startsWith("/api/members/role") && request.getMethod().equals("PUT")) ;
     }
 }

@@ -16,6 +16,8 @@ public interface ChatAndMemberRepository {
 
     Optional<Member.Role> getChatMemberRole(UUID chatId, String username);
 
+    void changeChatMemberRole(Member member);
+
     void addChatMember(Member member);
 
     void deleteMember(Member member);
