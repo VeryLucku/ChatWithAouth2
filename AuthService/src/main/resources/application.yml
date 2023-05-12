@@ -9,6 +9,8 @@ spring:
         hibernate:
             ddl-auto: update
 client:
+    id: 98c7778c-1f68-4d78-ad76-38cb4a4dca9b
     clientId: admin-client
     clientSecret: secret
-    scopes: message.write, message.read
+    scopes: write read delete all
+    redirectUri: http://127.0.0.1:9000/login/oauth2/code

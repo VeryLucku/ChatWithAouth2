@@ -2,16 +2,21 @@ package com.edu.authservice.securityConfig;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
+import java.util.UUID;
 
-@Configuration
+
 @ConfigurationProperties(prefix = "client")
+@Component
 @Data
 public class RegisteredClientProperties {
 
-    private String clientId = "admin-client";
-    private String clientSecret = "secret";
-    private Set<String> scopes = Set.of("message.write", "message.read", "message.delete");
+    private UUID id;
+    private String clientId;
+    private String clientSecret;
+    private Set<String> scopes;
+    private String redirectUri;
 }
