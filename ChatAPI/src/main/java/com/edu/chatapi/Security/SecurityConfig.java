@@ -14,8 +14,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeRequests()
-                .antMatchers("/api/**")
-                .hasAuthority("SCOPE_message.write")
+                .antMatchers(HttpMethod.POST, "/api/*")
+                .hasAuthority("SCOPE_write")
+                .antMatchers(HttpMethod.GET, "/api/*")
+                .hasAuthority("SCOPE_read")
+                .antMatchers(HttpMethod.DELETE, "/api/*")
+                .hasAuthority("SCOPE_delete")
+                .antMatchers("/api/*?/all")
+                .hasAuthority("SCOPE_all")
                 .and()
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .build();
