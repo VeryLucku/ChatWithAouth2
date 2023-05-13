@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Member {
 
-    @NotNull
+    @JsonIgnore
     private UUID chatId;
 
     @NotBlank
@@ -26,5 +26,10 @@ public class Member {
         MEMBER,
         OWNER,
         ADMIN
+    }
+
+    public Member(String memberName, Role role) {
+        this.memberName = memberName;
+        this.role = role;
     }
 }

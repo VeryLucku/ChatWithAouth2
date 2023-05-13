@@ -1,5 +1,6 @@
 package com.edu.authservice.securityConfig;
 
+import com.edu.authservice.AuthServiceApplication;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
@@ -120,26 +121,5 @@ public class AuthorizationServerConfig {
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder().build();
-    }
-
-    @PostConstruct
-    public void updateRep(RegisteredClientRepository registeredClientRepository,
-                          PasswordEncoder passwordEncoder) {
-        if (registeredClientRepository.findByClientId(registeredClientProperties.getClientId()) == null) {
-            RegisteredClient registeredClient = RegisteredClient.withId(registeredClientProperties.getClientId())
-                    .clientId(registeredClientProperties.getClientId())
-                    .clientSecret(passwordEncoder.encode(registeredClientProperties.getClientSecret()))
-                    .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                    .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                    .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                    .redirectUri(registeredClientProperties.getRedirectUri())
-                    .scope(OidcScopes.OPENID)
-                    .scope(OidcScopes.PROFILE)
-                    .scopes((u) -> u.addAll(registeredClientProperties.getScopes()))
-                    .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
-                    .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofDays(10)).build())
-                    .build();
-            registeredClientRepository.save(registeredClient);
-        }
     }
 }

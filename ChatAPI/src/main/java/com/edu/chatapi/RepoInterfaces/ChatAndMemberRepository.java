@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface ChatAndMemberRepository {
 
-    List<String> getAllChatMembers(UUID chat_id);
+    List<Member> getAllChatMembers(UUID chat_id);
 
     List<UUID> getAllMemberChats(String username);
 

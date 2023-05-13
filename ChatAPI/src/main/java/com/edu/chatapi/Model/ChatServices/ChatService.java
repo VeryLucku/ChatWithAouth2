@@ -1,13 +1,14 @@
 package com.edu.chatapi.Model.ChatServices;
 
-import com.edu.chatapi.CustomExceptions.InvalidActionException;
 import com.edu.chatapi.Model.ChatUnits.Chat;
 import com.edu.chatapi.Model.ChatUnits.Member;
 import com.edu.chatapi.RepoInterfaces.ChatAndMemberRepository;
 import com.edu.chatapi.RepoInterfaces.ChatRepository;
 import com.edu.chatapi.RepoInterfaces.MessageRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class ChatService {
 
         Chat chat = chatOpt.get();
 
-        chat.setMemberNames(
+        chat.setMembers(
                 chatAndMemberRepository.getAllChatMembers(chatId));
 
         return chat;
@@ -50,7 +51,7 @@ public class ChatService {
         chat = chatRepository.save(chat);
         Member member = new Member(chat.getId(), chat.getAuthor(), Member.Role.OWNER);
         addChatMember(member);
-        chat.setMemberNames(List.of(chat.getAuthor()));
+        chat.setMembers(List.of(member));
         return chat;
     }
 
@@ -59,7 +60,7 @@ public class ChatService {
         List<Chat> chats = chatRepository.findAll();
 
         for (Chat chat : chats) {
-            chat.setMemberNames(
+            chat.setMembers(
                     chatAndMemberRepository.getAllChatMembers(chat.getId()));
         }
 
@@ -103,6 +104,14 @@ public class ChatService {
 
     @Transactional
     public void changeChatMemberRole(String owner, Member member) {
+        if (!chatAndMemberRepository.isChatContainsMemberWithUsername(member.getChatId(), member.getMemberName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Chat doesn't contain specified user");
+        }
+
+        if (owner.equals(member.getMemberName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You can't change your own role");
+        }
+
         chatAndMemberRepository.changeChatMemberRole(member);
 
         if (member.getRole() == Member.Role.OWNER) {

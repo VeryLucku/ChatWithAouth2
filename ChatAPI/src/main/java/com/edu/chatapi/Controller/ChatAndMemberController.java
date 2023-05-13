@@ -36,8 +36,10 @@ public class ChatAndMemberController {
     }
 
     @PutMapping("/role")
-    public void changeChatMemberRole(@Valid @RequestBody Member member,
+    public void changeChatMemberRole(@RequestParam UUID chatId,
+                                     @RequestParam String username,
+                                     @RequestParam Member.Role role,
                                      Principal principal) {
-        chatService.changeChatMemberRole(principal.getName(), member);
+        chatService.changeChatMemberRole(principal.getName(), new Member(chatId, username, role));
     }
 }

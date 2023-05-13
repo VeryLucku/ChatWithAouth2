@@ -18,7 +18,7 @@ public class Chat {
 
     private String author;
 
-    private List<String> memberNames;
+    private List<Member> members;
 
     public Chat(String name, String author) {
         this.name = name;

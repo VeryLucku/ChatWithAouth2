@@ -25,10 +25,10 @@ public class JDBCChatAndMemberRepository implements ChatAndMemberRepository {
     }
 
     @Override
-    public List<String> getAllChatMembers(UUID chat_id) {
+    public List<Member> getAllChatMembers(UUID chat_id) {
         return jdbcTemplate.query(
-                "select member_name from \"chat-member\" where chat_id=?",
-                this::mapRowToMemberName,
+                "select member_name, role from \"chat-member\" where chat_id=?",
+                this::mapRowToMember,
                 chat_id
         );
     }
@@ -126,5 +126,9 @@ public class JDBCChatAndMemberRepository implements ChatAndMemberRepository {
 
     private Member.Role mapRowToMemberRole(ResultSet row, int rowNum) throws SQLException {
         return Member.Role.valueOf(row.getString("role"));
+    }
+
+    private Member mapRowToMember(ResultSet row, int rowNum) throws SQLException {
+        return new Member(row.getString("member_name"), Member.Role.valueOf(row.getString("role")));
     }
 }
