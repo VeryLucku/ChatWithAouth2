@@ -53,4 +53,10 @@ public class ChatController {
         chatService.deleteChat(id);
         log.info("Chat with id {} was deleted", id);
     }
+
+    @DeleteMapping("/removeMember")
+    public void removeMember(@RequestParam UUID chatId,
+                             @RequestParam String username) {
+        chatService.removeChatMember(chatId, username);
+    }
 }

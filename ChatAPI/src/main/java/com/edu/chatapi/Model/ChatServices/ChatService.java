@@ -99,6 +99,10 @@ public class ChatService {
 
     @Transactional
     public void removeChatMember(UUID chatId, String username) {
+        if (chatAndMemberRepository.isChatMemberHasRole(chatId, username, Member.Role.OWNER)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Chat owner can't be removed");
+        }
+
         chatAndMemberRepository.deleteMember(new Member(chatId, username, null));
     }
 
@@ -106,10 +110,6 @@ public class ChatService {
     public void changeChatMemberRole(String owner, Member member) {
         if (!chatAndMemberRepository.isChatContainsMemberWithUsername(member.getChatId(), member.getMemberName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Chat doesn't contain specified user");
-        }
-
-        if (owner.equals(member.getMemberName())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You can't change your own role");
         }
 
         chatAndMemberRepository.changeChatMemberRole(member);

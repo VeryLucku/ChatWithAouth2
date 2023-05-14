@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
-import org.springframework.lang.NonNullApi;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -15,23 +14,22 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Optional;
 import java.util.UUID;
 
 @Component
-@Order
-public class ChatOwnerCheckFilter extends OncePerRequestFilter {
+@Order(1)
+public class ChatOwnerOrAdminCheckFilter extends OncePerRequestFilter {
 
     ChatAndMemberRepository chatAndMemberRepository;
     UUIDExtractor uuidExtractor;
 
-    final Logger log = LoggerFactory.getLogger(ChatOwnerCheckFilter.class);
+    final Logger log = LoggerFactory.getLogger(ChatOwnerOrAdminCheckFilter.class);
 
     @Autowired
-    public ChatOwnerCheckFilter(ChatAndMemberRepository chatAndMemberRepository,
+    public ChatOwnerOrAdminCheckFilter(ChatAndMemberRepository chatAndMemberRepository,
                                 UUIDExtractor uuidExtractor) {
         super();
         this.chatAndMemberRepository = chatAndMemberRepository;
@@ -39,7 +37,7 @@ public class ChatOwnerCheckFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,  HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Principal principal = request.getUserPrincipal();
 
         Optional<UUID> id = uuidExtractor.extract(request);
@@ -49,8 +47,9 @@ public class ChatOwnerCheckFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (!chatAndMemberRepository.isChatMemberHasRole(id.get(), principal.getName(), Member.Role.OWNER)) {
-            response.sendError(400, "You aren't chat owner");
+        if (!chatAndMemberRepository.isChatMemberHasRole(id.get(), principal.getName(), Member.Role.OWNER) &&
+                !chatAndMemberRepository.isChatMemberHasRole(id.get(), principal.getName(), Member.Role.ADMIN)) {
+            response.sendError(400, "You don't allow to perform this action");
             return;
         }
 
@@ -62,7 +61,6 @@ public class ChatOwnerCheckFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        return !(path.startsWith("/api/chats") && !path.startsWith("/api/chats/removeMember") && request.getMethod().equals("DELETE") ||
-                path.startsWith("/api/members/role") && request.getMethod().equals("PUT")) ;
+        return !(path.startsWith("/api/chats/removeMember") && request.getMethod().equals("DELETE"));
     }
 }

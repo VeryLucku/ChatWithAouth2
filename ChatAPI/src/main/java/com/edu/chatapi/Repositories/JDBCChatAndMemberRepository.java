@@ -96,8 +96,6 @@ public class JDBCChatAndMemberRepository implements ChatAndMemberRepository {
     @Override
     public void deleteMember(Member member) {
 
-
-
         int count = jdbcTemplate.update(
                 "delete from \"chat-member\" where chat_id = ? and member_name = ?",
                 member.getChatId(),
