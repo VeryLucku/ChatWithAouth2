@@ -58,7 +58,7 @@ public class JDBCMessageRepository implements MessageRepository {
     public List<ChatMessage> findAllByChatId(UUID chatId) {
 
         return jdbcTemplate.query(
-                "select id, created_at, message, username, chat_id from Messages where chat_id=?",
+                "select id, created_at, message, username, chat_id from Messages where chat_id=? order by created_at",
                 this::mapRowToMessage,
                 chatId
         );
