@@ -1,7 +1,6 @@
 package com.edu.authservice.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -13,12 +12,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @Entity
-@JsonDeserialize
 @NoArgsConstructor
 public class UserData implements UserDetails {
 

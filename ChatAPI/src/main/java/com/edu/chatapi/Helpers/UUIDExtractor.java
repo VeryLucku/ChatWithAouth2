@@ -1,8 +1,8 @@
 package com.edu.chatapi.Helpers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;

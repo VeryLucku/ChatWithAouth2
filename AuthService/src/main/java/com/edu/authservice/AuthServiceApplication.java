@@ -1,7 +1,6 @@
 package com.edu.authservice;
 
 import com.edu.authservice.securityConfig.RegisteredClientProperties;
-import jakarta.annotation.PostConstruct;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -48,10 +47,5 @@ public class AuthServiceApplication {
 					.build();
 			registeredClientRepository.save(registeredClient);
 		}
-	}
-
-	public void updateRep() {
-
-
 	}
 }

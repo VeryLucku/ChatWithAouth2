@@ -3,12 +3,12 @@ package com.edu.chatapi.Controller;
 import com.edu.chatapi.Model.ChatServices.ChatService;
 import com.edu.chatapi.Model.ChatUnits.Chat;
 import com.edu.chatapi.Model.DTOs.ChatDTO;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.security.Principal;
 import java.util.UUID;
 

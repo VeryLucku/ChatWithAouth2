@@ -13,14 +13,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeRequests()
-                .antMatchers("/api/**/all")
+                .authorizeHttpRequests()
+                .requestMatchers("/api/**/all")
                 .hasAuthority("SCOPE_all")
-                .antMatchers(HttpMethod.POST, "/api/**")
+                .requestMatchers(HttpMethod.POST, "/api/**")
                 .hasAuthority("SCOPE_write")
-                .antMatchers(HttpMethod.GET, "/api/**")
+                .requestMatchers(HttpMethod.GET, "/api/**")
                 .hasAuthority("SCOPE_read")
-                .antMatchers(HttpMethod.DELETE, "/api/**")
+                .requestMatchers(HttpMethod.DELETE, "/api/**")
                 .hasAuthority("SCOPE_delete")
                 .anyRequest()
                 .authenticated()
