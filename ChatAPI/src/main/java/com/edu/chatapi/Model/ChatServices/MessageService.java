@@ -42,11 +42,7 @@ public class MessageService {
     public ChatMessage findById(UUID id) {
         Optional<ChatMessage> chatOpt = messageRepository.findById(id);
 
-        if (chatOpt.isEmpty()) {
-            throw new NullPointerException("Message with specified id was not found");
-        }
-
-        return chatOpt.get();
+        return chatOpt.orElseThrow(() -> new NullPointerException("Message with specified id was not found"));
     }
 
     public List<ChatMessage> findAllByChatId(UUID chatId) {
@@ -61,12 +57,13 @@ public class MessageService {
             throw new NullPointerException("Message with given id does not exist");
         }
 
-        ChatMessage chatMessage = message.get();
+        message.ifPresent(mes -> {
+            if (!mes.getAuthor().equals(username)) {
+                throw new AccessDeniedException("Only author of message can delete it");
+            }
 
-        if (!chatMessage.getAuthor().equals(username)) {
-            throw new AccessDeniedException("Only author of message can delete it");
-        }
+            messageRepository.deleteMessage(id);
+        });
 
-        messageRepository.deleteMessage(id);
     }
 }

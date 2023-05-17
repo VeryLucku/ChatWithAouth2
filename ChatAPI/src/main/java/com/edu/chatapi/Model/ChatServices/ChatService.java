@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -59,10 +58,8 @@ public class ChatService {
     public Iterable<Chat> findAll() {
         List<Chat> chats = chatRepository.findAll();
 
-        for (Chat chat : chats) {
-            chat.setMembers(
-                    chatAndMemberRepository.getAllChatMembers(chat.getId()));
-        }
+        chats
+                .forEach(chat -> chat.setMembers(chatAndMemberRepository.getAllChatMembers(chat.getId())));
 
         return chats;
     }
@@ -71,14 +68,9 @@ public class ChatService {
     public List<Chat> findAllByUsername(String username) {
         List<UUID> chatIds = chatAndMemberRepository.getAllMemberChats(username);
 
-        List<Chat> chats = new ArrayList<>();
-
-        for (UUID id : chatIds) {
-            Chat chat = findById(id);
-            chats.add(chat);
-        }
-
-        return chats;
+        return chatIds.stream()
+                .map(this::findById)
+                .toList();
     }
 
     @Transactional
