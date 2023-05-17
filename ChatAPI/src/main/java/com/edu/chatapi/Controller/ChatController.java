@@ -3,6 +3,7 @@ package com.edu.chatapi.Controller;
 import com.edu.chatapi.Model.ChatServices.ChatService;
 import com.edu.chatapi.Model.ChatUnits.Chat;
 import com.edu.chatapi.Model.DTOs.ChatDTO;
+import com.edu.chatapi.Model.Mappers.ChatMapper;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -17,11 +19,13 @@ import java.util.UUID;
 public class ChatController {
 
     final Logger log = LoggerFactory.getLogger(ChatController.class);
-    ChatService chatService;
+    private final ChatService chatService;
+    private final ChatMapper chatMapper;
 
     @Autowired
-    public ChatController(ChatService chatService) {
+    public ChatController(ChatService chatService, ChatMapper chatMapper) {
         this.chatService = chatService;
+        this.chatMapper = chatMapper;
     }
 
     @GetMapping(path = "/all")
@@ -30,22 +34,27 @@ public class ChatController {
     }
 
     @GetMapping
-    public Iterable<Chat> getAllUserChats(Principal principal) {
-        return chatService.findAllByUsername(principal.getName());
+    public List<ChatDTO> getAllUserChats(Principal principal) {
+        List<Chat> chats = chatService.findAllByUsername(principal.getName());
+
+        return chats.stream()
+                .map(chatMapper::toChatDTO)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public Chat getChatById(@PathVariable UUID id) {
-        return chatService.findById(id);
+    public ChatDTO getChatById(@PathVariable UUID id) {
+        Chat chat = chatService.findById(id);
+        return chatMapper.toChatDTO(chat);
     }
 
     @PostMapping
-    public Chat createChat(@Valid @RequestBody ChatDTO chatDTO,
+    public ChatDTO createChat(@Valid @RequestBody ChatDTO chatDTO,
                            Principal principal) {
-        Chat chat = chatDTO.toChat(principal.getName());
+        Chat chat = chatMapper.toChat(chatDTO, principal.getName());
         chat = chatService.save(chat);
         log.info("Chat with id {} was created, author {}", chat.getId(), chat.getAuthor());
-        return chat;
+        return chatMapper.toChatDTO(chat);
     }
 
     @DeleteMapping("/{id}")

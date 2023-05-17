@@ -8,6 +8,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,7 +35,7 @@ public class MessageService {
         return message;
     }
 
-    public Iterable<ChatMessage> findAll() {
+    public List<ChatMessage> findAll() {
         return messageRepository.findAll();
     }
 
@@ -48,7 +49,7 @@ public class MessageService {
         return chatOpt.get();
     }
 
-    public Iterable<ChatMessage> findAllByChatId(UUID chatId) {
+    public List<ChatMessage> findAllByChatId(UUID chatId) {
         return messageRepository.findAllByChatId(chatId);
     }
 

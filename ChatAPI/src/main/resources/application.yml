@@ -1,11 +1,13 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/Chatdb
+    url: jdbc:postgresql://localhost:5432/Chat
     username: postgres
     password: Ufym->q-b-Vjyf
-  jpa:
-    hibernate:
-      ddl-auto: update
+  flyway:
+    url: jdbc:postgresql://localhost:5432/Chat
+    locations: classpath:db/migration
+    user: postgres
+    password: Ufym->q-b-Vjyf
   security:
     oauth2:
       resourceserver:

@@ -68,7 +68,7 @@ public class ChatService {
     }
 
     @Transactional
-    public Iterable<Chat> findAllByUsername(String username) {
+    public List<Chat> findAllByUsername(String username) {
         List<UUID> chatIds = chatAndMemberRepository.getAllMemberChats(username);
 
         List<Chat> chats = new ArrayList<>();

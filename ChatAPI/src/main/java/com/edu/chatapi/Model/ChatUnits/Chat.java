@@ -30,4 +30,5 @@ public class Chat {
         this.name = name;
         this.author = author;
     }
+
 }
