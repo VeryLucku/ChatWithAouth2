@@ -14,7 +14,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests()
-                .requestMatchers("/api/**/all")
+                .requestMatchers("/api/*/all")
                 .hasAuthority("SCOPE_all")
                 .requestMatchers(HttpMethod.POST, "/api/**")
                 .hasAuthority("SCOPE_write")

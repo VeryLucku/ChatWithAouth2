@@ -1,6 +1,7 @@
 package com.edu.authservice.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @NoArgsConstructor
+@JsonDeserialize
 public class UserData implements UserDetails {
 
     @Id
