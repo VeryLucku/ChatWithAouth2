@@ -49,7 +49,7 @@ public class ChatOwnerCheckFilter extends OncePerRequestFilter {
 
         if (!chatAndMemberRepository.isChatMemberHasRole(id.get(), principal.getName(), Member.Role.OWNER)) {
             response.sendError(400, "You aren't chat owner");
-            return;
+            //return;
         }
 
         log.info("Filter checked that current action performed by chat owner, username {}", principal.getName());
